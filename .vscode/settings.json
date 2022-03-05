@@ -1,0 +1,7 @@
+{
+    "java.project.sourcePaths": [
+        "src",
+        "app/src/main/java/yams"
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic"
+}

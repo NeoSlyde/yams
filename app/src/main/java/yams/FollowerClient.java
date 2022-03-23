@@ -14,12 +14,8 @@ import yams.interaction.parser.InteractionParser;
 import yams.interaction.req.RcvIdsReq;
 import yams.interaction.res.ErrRes;
 import yams.interaction.res.MsgIdsRes;
-import yams.logger.Logger;
-import yams.logger.StdOutLogger;
 
 public class FollowerClient {
-    private static Logger logger = new StdOutLogger();
-
     public static void run(String host, int port) {
         try {
             var stdinScanner = new Scanner(System.in);
@@ -27,9 +23,9 @@ public class FollowerClient {
             var out = socket.getOutputStream();
             var in = new Scanner(socket.getInputStream()).useDelimiter("\\r\\n");
 
-            logger.log("Started YAMS Client on " + host + ":" + port);
+            System.out.println("Started YAMS Client on " + host + ":" + port);
 
-            logger.lognln("Enter a space separated list of users to follow: ");
+            System.out.print("Enter a space separated list of users to follow: ");
             String[] users = stdinScanner.nextLine().split(" ");
             var parser = new InteractionParser(null);
 
@@ -48,7 +44,7 @@ public class FollowerClient {
                         throw new RuntimeException("Expected MsgIdsRes");
                     ids.addAll(Longs.asList(((MsgIdsRes) res).ids()));
                 } catch (ErrRes e) {
-                    logger.lognln("ERROR! " + e.getMessage());
+                    System.out.print("ERROR! " + e.getMessage());
                 }
             }
             Collections.sort(ids);

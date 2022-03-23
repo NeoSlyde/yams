@@ -3,13 +3,11 @@ package yams.interaction;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import yams.logger.Logger;
-
-public record InteractionLoggerDecorator(Interaction reqHandler, Logger logger) implements Interaction {
+public record InteractionLoggerDecorator(Interaction reqHandler) implements Interaction {
     @Override
     public void receive(OutputStream out) throws IOException {
         reqHandler.receive(out);
-        logger.log("HEADER: " + serializeHeader(), "BODY: " + serializeBody(), "");
+        System.out.println("HEADER: " + serializeHeader() + '\n' + "BODY: " + serializeBody() + '\n');
     }
 
     @Override

@@ -7,12 +7,8 @@ import java.util.Scanner;
 import yams.interaction.parser.InteractionParser;
 import yams.interaction.req.PubReq;
 import yams.interaction.res.ErrRes;
-import yams.logger.Logger;
-import yams.logger.StdOutLogger;
 
 public class PublisherClient {
-    private static Logger logger = new StdOutLogger();
-
     public static void run(String host, int port) {
         try {
             var stdinScanner = new Scanner(System.in);
@@ -20,9 +16,9 @@ public class PublisherClient {
             var out = socket.getOutputStream();
             var in = new Scanner(socket.getInputStream()).useDelimiter("\\r\\n");
 
-            logger.log("Started YAMS Client on " + host + ":" + port);
+            System.out.println("Started YAMS Client on " + host + ":" + port);
 
-            logger.lognln("Enter your username: ");
+            System.out.print("Enter your username: ");
             var user = stdinScanner.nextLine().trim();
             var parser = new InteractionParser(null);
 
@@ -34,9 +30,9 @@ public class PublisherClient {
                 var body = in.next().trim();
                 try {
                     var res = parser.parse(header, body);
-                    logger.log("HEADER: " + res.serializeHeader(), "BODY: " + res.serializeBody());
+                    System.out.println("HEADER: " + res.serializeHeader() + '\n' + "BODY: " + res.serializeBody());
                 } catch (ErrRes e) {
-                    logger.lognln("ERROR! " + e.getMessage());
+                    System.out.print("ERROR! " + e.getMessage());
                 }
             }
 

@@ -11,20 +11,17 @@ import yams.interaction.Interaction;
 import yams.interaction.InteractionLoggerDecorator;
 import yams.interaction.parser.InteractionParser;
 import yams.interaction.res.ErrRes;
-import yams.logger.Logger;
-import yams.logger.StdOutLogger;
 import yams.msg.db.ListMsgDb;
 import yams.msg.db.MsgDb;
 
 public class ServerMain {
-    private static Logger logger = new StdOutLogger();
     private static MsgDb msgDb = new ListMsgDb();
 
     public static void run(int port) {
         try {
             var pool = Executors.newFixedThreadPool(16);
             var server = new ServerSocket(port);
-            logger.log("Started YAMS on localhost:" + port);
+            System.out.println("Started YAMS on localhost:" + port);
             while (!server.isClosed()) {
                 var client = server.accept();
                 pool.execute(new ConnHandler(client));
@@ -38,7 +35,7 @@ public class ServerMain {
     private record ConnHandler(Socket client) implements Runnable {
         @Override
         public void run() {
-            Function<Interaction, Interaction> reqDecorator = (h) -> new InteractionLoggerDecorator(h, logger);
+            Function<Interaction, Interaction> reqDecorator = (h) -> new InteractionLoggerDecorator(h);
 
             try (var in = new Scanner(client.getInputStream()).useDelimiter("\\r\\n")) {
                 while (true) {

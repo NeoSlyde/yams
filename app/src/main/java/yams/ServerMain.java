@@ -10,9 +10,9 @@ import java.util.function.Function;
 
 import yams.logger.Logger;
 import yams.logger.StdOutLogger;
-import yams.msg.DummyMsg;
-import yams.msg.Msg;
-import yams.msg.MsgLoggerDecorator;
+import yams.req.DummyReq;
+import yams.req.Req;
+import yams.req.ReqLoggerDecorator;
 
 public class ServerMain {
     private static Logger logger = new StdOutLogger();
@@ -35,14 +35,14 @@ public class ServerMain {
     private record ConnHandler(Socket client) implements Runnable {
         @Override
         public void run() {
-            Function<Msg, Msg> msgHandlerDecorator = (h) -> new MsgLoggerDecorator(h, logger);
+            Function<Req, Req> reqDecorator = (h) -> new ReqLoggerDecorator(h, logger);
 
             try {
                 var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 String header, body;
                 while ((header = in.readLine()) != null && (body = in.readLine()) != null) {
-                    Msg msgHandler = new DummyMsg(header, body);
-                    msgHandlerDecorator.apply(msgHandler).handle(client);
+                    Req req = new DummyReq(header, body);
+                    reqDecorator.apply(req).handle(client);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

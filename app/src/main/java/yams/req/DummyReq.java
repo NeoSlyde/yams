@@ -1,8 +1,8 @@
-package yams.msg;
+package yams.req;
 
 import java.net.Socket;
 
-public record DummyMsg(String header, String body) implements Msg {
+public record DummyReq(String header, String body) implements Req {
     @Override
     public void handle(Socket socket) {
     }

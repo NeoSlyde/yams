@@ -1,23 +1,23 @@
-package yams.msg;
+package yams.req;
 
 import java.net.Socket;
 
 import yams.logger.Logger;
 
-public record MsgLoggerDecorator(Msg msgHandler, Logger logger) implements Msg {
+public record ReqLoggerDecorator(Req reqHandler, Logger logger) implements Req {
     @Override
     public void handle(Socket socket) {
-        msgHandler.handle(socket);
+        reqHandler.handle(socket);
         logger.log("HEADER: " + serializeHeader(), "BODY: " + serializeBody(), "");
     }
 
     @Override
     public String serializeHeader() {
-        return msgHandler.serializeHeader();
+        return reqHandler.serializeHeader();
     }
 
     @Override
     public String serializeBody() {
-        return msgHandler.serializeBody();
+        return reqHandler.serializeBody();
     }
 }

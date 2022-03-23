@@ -6,9 +6,12 @@ import java.util.Optional;
 import yams.interaction.Interaction;
 import yams.interaction.req.PubReq;
 import yams.interaction.req.RcvIdsReq;
+import yams.interaction.req.RcvMsg;
 import yams.interaction.res.ErrRes;
 import yams.interaction.res.MsgIdsRes;
+import yams.interaction.res.MsgRes;
 import yams.interaction.res.OkRes;
+import yams.msg.Msg;
 import yams.msg.db.MsgDb;
 
 public record InteractionParser(MsgDb db) {
@@ -28,13 +31,20 @@ public record InteractionParser(MsgDb db) {
                     return parseMsgIds(headerParts, body);
                 case "ERROR":
                     return parseError(headerParts, body);
+                case "RCV_MSG":
+                    return parseRcvMsg(headerParts, body);
+                case "MSG":
+                    String[] bodyLines = body.split("\n");
+                    return parseMsgRes(
+                            bodyLines[0].split(" "),
+                            Arrays.stream(bodyLines).skip(1).reduce((a, b) -> a + b).orElse(""));
             }
         } catch (IndexOutOfBoundsException e) {
         }
         throw new ErrRes.BadReqFormat();
     }
 
-    private Interaction parsePublish(String[] headerParts, String body) throws ErrRes {
+    private PubReq parsePublish(String[] headerParts, String body) throws ErrRes {
         String[] arg1Parts = headerParts[1].split(":");
         if (!arg1Parts[0].equals("author") || arg1Parts[1].charAt(0) != '@')
             throw new ErrRes.BadReqFormat();
@@ -42,7 +52,7 @@ public record InteractionParser(MsgDb db) {
         return new PubReq(db, author, body);
     }
 
-    private Interaction parseRcvIds(String[] headerParts, String body) throws ErrRes {
+    private RcvIdsReq parseRcvIds(String[] headerParts, String body) throws ErrRes {
         Optional<String> author = Optional.empty();
         Optional<String> tag = Optional.empty();
         Optional<Long> sinceId = Optional.empty();
@@ -68,13 +78,13 @@ public record InteractionParser(MsgDb db) {
         return new RcvIdsReq(db, author, tag, sinceId, limit);
     }
 
-    private Interaction parseMsgIds(String[] headerParts, String body) throws ErrRes {
+    private MsgIdsRes parseMsgIds(String[] headerParts, String body) throws ErrRes {
         if (body.trim().isBlank())
             return new MsgIdsRes(new long[0]);
         return new MsgIdsRes(Arrays.stream(body.trim().split("\n")).mapToLong(Long::parseLong).toArray());
     }
 
-    private Interaction parseError(String[] headerParts, String body) throws ErrRes {
+    private ErrRes parseError(String[] headerParts, String body) throws ErrRes {
         switch (body) {
             case "bad request format":
                 return new ErrRes.BadReqFormat();
@@ -83,5 +93,40 @@ public record InteractionParser(MsgDb db) {
             default:
                 throw new ErrRes.BadReqFormat();
         }
+    }
+
+    private RcvMsg parseRcvMsg(String[] headerParts, String body) throws ErrRes {
+        String[] arg1Parts = headerParts[1].split(":");
+        if (!arg1Parts[0].equals("msg_id"))
+            throw new ErrRes.BadReqFormat();
+        long id = Long.parseLong(arg1Parts[1]);
+        return new RcvMsg(db, id);
+    }
+
+    private MsgRes parseMsgRes(String[] bodyl1Parts, String bodyRest) throws ErrRes {
+        String author = null;
+        long id = -1;
+        Optional<Long> replyToId = Optional.empty();
+        boolean republished = false;
+        for (int i = 0; i < bodyl1Parts.length; i++) {
+            String[] argParts = bodyl1Parts[i].split(":");
+            if (argParts[0].equals("author")) {
+                if (argParts[1].charAt(0) != '@')
+                    throw new ErrRes.BadReqFormat();
+                author = argParts[1].substring(1);
+            } else if (argParts[0].equals("msg_id")) {
+                id = Long.parseLong(argParts[1]);
+            } else if (argParts[0].equals("reply_to_id")) {
+                replyToId = Optional.of(Long.parseLong(argParts[1]));
+            } else if (argParts[0].equals("republished")) {
+                republished = Boolean.parseBoolean(argParts[1]);
+            } else {
+                throw new ErrRes.BadReqFormat();
+            }
+        }
+
+        if (author == null || id == -1)
+            throw new ErrRes.BadReqFormat();
+        return new MsgRes(new Msg(id, author, replyToId, republished, bodyRest));
     }
 }

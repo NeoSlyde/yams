@@ -12,8 +12,11 @@ import com.google.common.primitives.Longs;
 
 import yams.interaction.parser.InteractionParser;
 import yams.interaction.req.RcvIdsReq;
+import yams.interaction.req.RcvMsg;
 import yams.interaction.res.ErrRes;
 import yams.interaction.res.MsgIdsRes;
+import yams.interaction.res.MsgRes;
+import yams.msg.Msg;
 
 public class FollowerClient {
     public static void run(String host, int port) {
@@ -34,7 +37,6 @@ public class FollowerClient {
             List<Long> ids = new ArrayList<>();
             for (String user : users) {
                 var req = new RcvIdsReq(null, Optional.of(user), Optional.empty(), Optional.empty(), Optional.empty());
-
                 req.sendTo(out);
                 var header = in.next().trim();
                 var body = in.next().trim();
@@ -44,11 +46,38 @@ public class FollowerClient {
                         throw new RuntimeException("Expected MsgIdsRes");
                     ids.addAll(Longs.asList(((MsgIdsRes) res).ids()));
                 } catch (ErrRes e) {
-                    System.out.print("ERROR! " + e.getMessage());
+                    System.out.println("ERROR! " + e.getMessage());
                 }
             }
             Collections.sort(ids);
-            System.out.println(ids);
+
+            // Get Messages
+
+            List<Msg> msgs = new ArrayList<>();
+            for (long id : ids) {
+                var req = new RcvMsg(null, id);
+                req.sendTo(out);
+                var header = in.next().trim();
+                var body = in.next().trim();
+                try {
+                    var res = parser.parse(header, body);
+                    if (!(res instanceof MsgRes))
+                        throw new RuntimeException("Expected MsgRes");
+                    msgs.add(((MsgRes) res).msg());
+                } catch (ErrRes e) {
+                    System.out.println("ERROR! " + e.getMessage());
+                }
+            }
+
+            // Print Messages
+
+            for (Msg msg : msgs) {
+                if (msg.republished())
+                    System.out.print("[republished] ");
+                if (msg.replyToId().isPresent())
+                    System.out.print("[reply to " + msg.replyToId().get() + "] ");
+                System.out.println(msg.user() + ": " + msg.msg());
+            }
 
             socket.close();
             stdinScanner.close();

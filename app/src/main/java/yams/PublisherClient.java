@@ -32,7 +32,7 @@ public class PublisherClient {
                     var res = parser.parse(header, body);
                     System.out.println("HEADER: " + res.serializeHeader() + '\n' + "BODY: " + res.serializeBody());
                 } catch (ErrRes e) {
-                    System.out.print("ERROR! " + e.getMessage());
+                    System.out.println("ERROR! " + e.getMessage());
                 }
             }
 

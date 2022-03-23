@@ -37,11 +37,9 @@ public class Main {
         String host = (String) parsedArgs.get("host");
         boolean isClient = Objects.equal(1, parsedArgs.get("client"));
 
-        System.out.println("Starting YAMS on " + host + ":" + port);
-
         if (isClient)
             ClientMain.run(host, port);
         else
-            ServerMain.run(host, port);
+            ServerMain.run(port);
     }
 }

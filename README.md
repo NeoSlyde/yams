@@ -4,4 +4,10 @@ Yet Another Microblogging Server
 
 ## Usage
 
-> gradle run --args='--help'
+### Client
+
+> gradle run --console=plain --args='--client'
+
+### Server
+
+> gradle run --console=plain

@@ -26,9 +26,9 @@ dependencies {
     implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
 }
 
-application {
-    // Define the main class for the application.
-    mainClass = 'yams.Main'
+run {
+    main = 'yams.Main'
+    standardInput = System.in
 }
 
 tasks.named('test') {

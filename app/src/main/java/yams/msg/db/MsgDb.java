@@ -2,6 +2,7 @@ package yams.msg.db;
 
 import java.util.Optional;
 
+import yams.interaction.res.ErrRes;
 import yams.msg.Msg;
 
 public interface MsgDb {
@@ -14,15 +15,15 @@ public interface MsgDb {
         push(user, Optional.empty(), false, msg);
     }
 
-    default void reply(String user, long replyToId) {
+    default void reply(String user, long replyToId) throws ErrRes.UnknownMsgId {
         if (getById(replyToId).isEmpty())
-            throw new IllegalArgumentException("No such message");
+            throw new ErrRes.UnknownMsgId();
         push(user, Optional.of(replyToId), false, "");
     }
 
-    default void republish(String user, long republishId) {
+    default void republish(String user, long republishId) throws ErrRes.UnknownMsgId {
         if (getById(republishId).isEmpty())
-            throw new IllegalArgumentException("No such message");
+            throw new ErrRes.UnknownMsgId();
         push(user, Optional.empty(), true, "");
     }
 

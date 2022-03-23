@@ -1,13 +1,14 @@
-package yams.req;
+package yams.interaction;
 
-import java.net.Socket;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import yams.logger.Logger;
 
-public record ReqLoggerDecorator(Req reqHandler, Logger logger) implements Req {
+public record InteractionLoggerDecorator(Interaction reqHandler, Logger logger) implements Interaction {
     @Override
-    public void handle(Socket socket) {
-        reqHandler.handle(socket);
+    public void receive(OutputStream out) throws IOException {
+        reqHandler.receive(out);
         logger.log("HEADER: " + serializeHeader(), "BODY: " + serializeBody(), "");
     }
 

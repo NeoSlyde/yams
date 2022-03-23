@@ -38,7 +38,7 @@ public class Main {
         boolean isClient = Objects.equal(1, parsedArgs.get("client"));
 
         if (isClient)
-            ClientMain.run(host, port);
+            PublisherClient.run(host, port);
         else
             ServerMain.run(port);
     }

@@ -2,13 +2,13 @@ package yams.msg;
 
 import java.net.Socket;
 
-public record MsgPrinterDecorator(Msg msgHandler) implements Msg {
+import yams.logger.Logger;
+
+public record MsgLoggerDecorator(Msg msgHandler, Logger logger) implements Msg {
     @Override
     public void handle(Socket socket) {
         msgHandler.handle(socket);
-        System.out.println("HEADER: " + serializeHeader());
-        System.out.println("BODY: " + serializeBody());
-        System.out.println();
+        logger.log("HEADER: " + serializeHeader(), "BODY: " + serializeBody(), "");
     }
 
     @Override

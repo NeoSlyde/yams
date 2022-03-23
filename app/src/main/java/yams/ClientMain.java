@@ -4,7 +4,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
+import yams.logger.Logger;
+import yams.logger.StdOutLogger;
+
 public class ClientMain {
+    private static Logger logger = new StdOutLogger();
+
     public static void main(String args[]) {
         run("localhost", 12345);
     }
@@ -14,14 +19,14 @@ public class ClientMain {
             var stdinScanner = new Scanner(System.in);
             var socket = new Socket(host, port);
 
-            System.out.println("Started YAMS Client on " + host + ":" + port);
+            logger.log("Started YAMS Client on " + host + ":" + port);
 
             while (stdinScanner.hasNextLine()) {
                 String str = stdinScanner.nextLine();
                 socket.getOutputStream().write(str.trim().getBytes());
                 socket.getOutputStream().write("\r\n".getBytes());
                 socket.getOutputStream().flush();
-                System.out.println("Sent: " + str);
+                logger.log("Sent: " + str);
 
             }
 

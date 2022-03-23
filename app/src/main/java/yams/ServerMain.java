@@ -1,10 +1,9 @@
 package yams;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 
@@ -41,10 +40,15 @@ public class ServerMain {
         public void run() {
             Function<Interaction, Interaction> reqDecorator = (h) -> new InteractionLoggerDecorator(h, logger);
 
-            try {
-                var in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                String header, body;
-                while ((header = in.readLine()) != null && (body = in.readLine()) != null) {
+            try (var in = new Scanner(client.getInputStream()).useDelimiter("\\r\\n")) {
+                while (true) {
+                    if (!in.hasNext())
+                        break;
+                    String header = in.next();
+                    if (!in.hasNext())
+                        break;
+
+                    String body = in.next();
                     var parser = new InteractionParser(msgDb);
                     try {
                         Interaction req = parser.parse(header, body);

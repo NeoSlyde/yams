@@ -14,8 +14,11 @@ public class Main {
         var argsParser = ArgumentParsers.newFor("YAMS").build()
                 .defaultHelp(true)
                 .description("Yet Another Microblogging Server");
-        argsParser.addArgument("--client")
-                .type(Integer.class)
+
+        argsParser.addArgument("--publisherClient")
+                .action(Arguments.storeConst())
+                .setConst(1);
+        argsParser.addArgument("--followerClient")
                 .action(Arguments.storeConst())
                 .setConst(1);
 
@@ -35,10 +38,13 @@ public class Main {
         }
         Integer port = (Integer) parsedArgs.get("port");
         String host = (String) parsedArgs.get("host");
-        boolean isClient = Objects.equal(1, parsedArgs.get("client"));
+        boolean isPublisherClient = Objects.equal(1, parsedArgs.get("publisherClient"));
+        boolean isFollowerClient = Objects.equal(1, parsedArgs.get("followerClient"));
 
-        if (isClient)
+        if (isPublisherClient)
             PublisherClient.run(host, port);
+        else if (isFollowerClient)
+            FollowerClient.run(host, port);
         else
             ServerMain.run(port);
     }

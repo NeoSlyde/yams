@@ -1,8 +1,13 @@
 package yams.interaction.parser;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import yams.interaction.Interaction;
 import yams.interaction.req.PubReq;
+import yams.interaction.req.RcvIdsReq;
 import yams.interaction.res.ErrRes;
+import yams.interaction.res.MsgIdsRes;
 import yams.interaction.res.OkRes;
 import yams.msg.db.MsgDb;
 
@@ -18,6 +23,38 @@ public record InteractionParser(MsgDb db) {
                     throw new ErrRes.BadReqFormat();
                 String author = arg1Parts[1].substring(1);
                 return new PubReq(db, author, body);
+            }
+
+            if (cmd.equals("RCV_IDS")) {
+                Optional<String> author = Optional.empty();
+                Optional<String> tag = Optional.empty();
+                Optional<Long> sinceId = Optional.empty();
+                Optional<Integer> limit = Optional.empty();
+                for (int i = 1; i < headerParts.length; i++) {
+                    String[] argParts = headerParts[i].split(":");
+                    if (argParts[0].equals("author")) {
+                        if (argParts[1].charAt(0) != '@')
+                            throw new ErrRes.BadReqFormat();
+                        author = Optional.of(argParts[1].substring(1));
+                    } else if (argParts[0].equals("tag")) {
+                        if (argParts[1].charAt(0) != '#')
+                            throw new ErrRes.BadReqFormat();
+                        tag = Optional.of(argParts[1].substring(1));
+                    } else if (argParts[0].equals("since_id")) {
+                        sinceId = Optional.of(Long.parseLong(argParts[1]));
+                    } else if (argParts[0].equals("limit")) {
+                        limit = Optional.of(Integer.parseInt(argParts[1]));
+                    } else {
+                        throw new ErrRes.BadReqFormat();
+                    }
+                }
+                return new RcvIdsReq(db, author, tag, sinceId, limit);
+            }
+
+            if (cmd.equals("MSG_IDS")) {
+                if (body.trim().isBlank())
+                    return new MsgIdsRes(new long[0]);
+                return new MsgIdsRes(Arrays.stream(body.trim().split("\n")).mapToLong(Long::parseLong).toArray());
             }
 
             if (cmd.equals("OK")) {

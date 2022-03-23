@@ -2,15 +2,22 @@ package yams;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
+import com.google.common.primitives.Longs;
+
 import yams.interaction.parser.InteractionParser;
-import yams.interaction.req.PubReq;
+import yams.interaction.req.RcvIdsReq;
 import yams.interaction.res.ErrRes;
+import yams.interaction.res.MsgIdsRes;
 import yams.logger.Logger;
 import yams.logger.StdOutLogger;
 
-public class PublisherClient {
+public class FollowerClient {
     private static Logger logger = new StdOutLogger();
 
     public static void run(String host, int port) {
@@ -22,23 +29,30 @@ public class PublisherClient {
 
             logger.log("Started YAMS Client on " + host + ":" + port);
 
-            logger.lognln("Enter your username: ");
-            var user = stdinScanner.nextLine().trim();
+            logger.lognln("Enter a space separated list of users to follow: ");
+            String[] users = stdinScanner.nextLine().split(" ");
             var parser = new InteractionParser(null);
 
-            while (stdinScanner.hasNextLine()) {
-                String msg = stdinScanner.nextLine().trim();
-                var req = new PubReq(null, user, msg);
+            // Get IDs
+
+            List<Long> ids = new ArrayList<>();
+            for (String user : users) {
+                var req = new RcvIdsReq(null, Optional.of(user), Optional.empty(), Optional.empty(), Optional.empty());
+
                 req.sendTo(out);
                 var header = in.next().trim();
                 var body = in.next().trim();
                 try {
                     var res = parser.parse(header, body);
-                    logger.log("HEADER: " + res.serializeHeader(), "BODY: " + res.serializeBody());
+                    if (!(res instanceof MsgIdsRes))
+                        throw new RuntimeException("Expected MsgIdsRes");
+                    ids.addAll(Longs.asList(((MsgIdsRes) res).ids()));
                 } catch (ErrRes e) {
                     logger.lognln("ERROR! " + e.getMessage());
                 }
             }
+            Collections.sort(ids);
+            System.out.println(ids);
 
             socket.close();
             stdinScanner.close();

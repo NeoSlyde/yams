@@ -20,14 +20,14 @@ public class ListMsgDb implements MsgDb {
     }
 
     @Override
-    public long[] getIds(Optional<String> user, Optional<String> tag, Optional<Long> sinceId, Optional<Integer> limit) {
+    public long[] getIds(Optional<String> user, Optional<String> tag, Optional<Long> sinceId, int limit) {
         synchronized (_dbUnsync) {
             return _dbUnsync.stream()
                     .filter(msg -> user.isEmpty() || msg.user().equals(user.get()))
                     .filter(msg -> tag.isEmpty() || msg.hasTag(tag.get()))
                     .filter(msg -> sinceId.isEmpty() || msg.id() > sinceId.get())
                     .mapToLong(Msg::id)
-                    .limit(limit.orElse(Integer.MAX_VALUE))
+                    .limit(limit)
                     .toArray();
         }
     }

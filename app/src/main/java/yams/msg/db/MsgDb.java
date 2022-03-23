@@ -31,7 +31,7 @@ public interface MsgDb {
             Optional<String> user,
             Optional<String> tag,
             Optional<Long> sinceId,
-            Optional<Integer> limit);
+            int limit);
 
     Optional<Msg> getById(long id);
 }

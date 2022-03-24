@@ -1,10 +1,10 @@
 package yams.interaction;
 
-import java.io.OutputStream;
+import java.net.Socket;
 
 public record DummyInteraction(String header, String body) implements Interaction {
     @Override
-    public void receive(OutputStream out) {
+    public void receive(Socket socket) {
     }
 
     @Override

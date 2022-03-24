@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import yams.interaction.Interaction;
+import yams.interaction.fluxreq.*;
 import yams.interaction.req.PubReq;
 import yams.interaction.req.RcvIdsReq;
 import yams.interaction.req.RcvMsgReq;
@@ -13,6 +14,7 @@ import yams.interaction.res.ErrRes;
 import yams.interaction.res.MsgIdsRes;
 import yams.interaction.res.MsgRes;
 import yams.interaction.res.OkRes;
+import yams.interaction.res.ErrRes.BadReqFormat;
 import yams.msg.Msg;
 import yams.msg.db.MsgDb;
 
@@ -48,6 +50,14 @@ public record InteractionParser(MsgDb db) {
                     return parseReplyReq(argParser, body);
                 case "REPUBLISH":
                     return parseRepubReq(argParser, body);
+
+                // FLUX REQ
+                case "CONNECT":
+                    return parseConnReq(argParser, body);
+                case "SUBSCRIBE":
+                    return parseSubReq(argParser, body);
+                case "UNSUBSCRIBE":
+                    return parseUnSubReq(argParser, body);
             }
         } catch (IndexOutOfBoundsException e) {
         }
@@ -131,4 +141,42 @@ public record InteractionParser(MsgDb db) {
             throw new ErrRes.BadReqFormat();
         return rawTag.substring(1);
     }
+
+    private Interaction parseConnReq(ArgumentParser argParser, String body) throws BadReqFormat {
+        String user = parseUser(argParser.getRequired("user"));
+        return new ConnReq(db, user);
+    }
+
+    private Interaction parseSubReq(ArgumentParser argParser, String body) throws BadReqFormat {
+        Optional<String> author = argParser.get("author");
+        Optional<String> tag = argParser.get("tag");
+
+        if(tag.isPresent() && author.isPresent()){
+            throw new BadReqFormat();
+        }
+        else if(tag.isPresent()){
+            return new SubReq.Tag(db, tag.get());
+        }
+        else if(author.isPresent()){
+            return new SubReq.User(db, author.get());
+        }
+        throw new BadReqFormat();
+    }
+
+    private Interaction parseUnSubReq(ArgumentParser argParser, String body) throws BadReqFormat {
+        Optional<String> author = argParser.get("author");
+        Optional<String> tag = argParser.get("tag");
+
+        if(tag.isPresent() && author.isPresent()){
+            throw new BadReqFormat();
+        }
+        else if(tag.isPresent()){
+            return new UnSubReq.Tag(db, tag.get());
+        }
+        else if(author.isPresent()){
+            return new UnSubReq.User(db, author.get());
+        }
+        throw new BadReqFormat();
+    }
+
 }

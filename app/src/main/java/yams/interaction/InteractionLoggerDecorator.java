@@ -1,12 +1,12 @@
 package yams.interaction;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.net.Socket;
 
 public record InteractionLoggerDecorator(Interaction reqHandler) implements Interaction {
     @Override
-    public void receive(OutputStream out) throws IOException {
-        reqHandler.receive(out);
+    public void receive(Socket socket) throws IOException {
+        reqHandler.receive(socket);
         System.out.println("HEADER: " + serializeHeader() + '\n' + "BODY: " + serializeBody() + '\n');
     }
 

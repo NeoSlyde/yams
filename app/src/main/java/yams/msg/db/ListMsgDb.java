@@ -40,4 +40,12 @@ public class ListMsgDb implements MsgDb {
                     .findAny();
         }
     }
+
+    @Override
+    public boolean userExists(String user) {
+        synchronized (_dbUnsync) {
+            return _dbUnsync.stream()
+                    .anyMatch(msg -> msg.user().equals(user));
+        }
+    }
 }

@@ -49,7 +49,7 @@ public class ServerMain {
                     var parser = new InteractionParser(msgDb);
                     try {
                         Interaction req = parser.parse(header, body);
-                        reqDecorator.apply(req).receive(client.getOutputStream());
+                        reqDecorator.apply(req).receive(client);
                     } catch (ErrRes e) {
                         e.sendTo(client.getOutputStream());
                     }

@@ -2,10 +2,11 @@ package yams.interaction;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Socket;
 
 public interface Interaction {
     // Called on the *receiving* side (i.e the server)
-    void receive(OutputStream out) throws IOException;
+    void receive(Socket socket) throws IOException;
 
     String serializeHeader();
 

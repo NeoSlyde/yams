@@ -35,4 +35,6 @@ public interface MsgDb {
             int limit);
 
     Optional<Msg> getById(long id);
+
+    boolean userExists(String user);
 }

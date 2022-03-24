@@ -22,9 +22,10 @@ public interface MsgDb {
     }
 
     default void republish(String user, long republishId) throws ErrRes.UnknownMsgId {
-        if (getById(republishId).isEmpty())
+        Optional<Msg> msg = getById(republishId);
+        if (msg.isEmpty())
             throw new ErrRes.UnknownMsgId();
-        push(user, Optional.empty(), true, "");
+        push(user, Optional.empty(), true, msg.get().msg());
     }
 
     long[] getIds(

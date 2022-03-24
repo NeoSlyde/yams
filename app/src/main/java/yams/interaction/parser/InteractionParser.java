@@ -111,13 +111,13 @@ public record InteractionParser(MsgDb db) {
     private ReplyReq parseReplyReq(ArgumentParser argParser, String body) throws ErrRes {
         String author = parseUser(argParser.getRequired("author"));
         long replyToId = Long.parseLong(argParser.getRequired("reply_to_id"));
-        return new ReplyReq(null, author, replyToId, body);
+        return new ReplyReq(db, author, replyToId, body);
     }
 
     private RepubReq parseRepubReq(ArgumentParser argParser, String body) throws ErrRes {
         String author = parseUser(argParser.getRequired("author"));
         long republishId = Long.parseLong(argParser.getRequired("msg_id"));
-        return new RepubReq(null, author, republishId, body);
+        return new RepubReq(db, author, republishId);
     }
 
     private String parseUser(String rawUser) throws ErrRes.BadReqFormat {

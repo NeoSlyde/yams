@@ -7,7 +7,10 @@ Yet Another Microblogging Server
 ### Client
 
 > gradle run --console=plain --args='--publisherClient'
+
 > gradle run --console=plain --args='--followerClient'
+
+> gradle run --console=plain --args='--reposterClient'
 
 ### Server
 

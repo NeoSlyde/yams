@@ -1,19 +1,10 @@
 package yams.interaction.fluxreq;
 
-import yams.interaction.res.OkRes;
-import yams.interaction.res.Res;
-import yams.msg.db.MsgDb;
+import yams.interaction.flux.FluxDb;
 
 public class UnSubReq {
     
-    public static record User(MsgDb db, String author) implements FluxReq {
-
-        @Override
-        public Res handle() {
-            //TODO
-            return new OkRes();
-        }
-
+    public static record User(FluxDb fluxDb, String author) implements FluxReq {
         @Override
         public String serializeHeader() {
             return "UNSUBSCRIBE author:@" + author;
@@ -25,14 +16,7 @@ public class UnSubReq {
         }
     }
 
-    public static record Tag(MsgDb db, String tag) implements FluxReq {
-
-        @Override
-        public Res handle() {
-            //TODO
-            return new OkRes();
-        }
-
+    public static record Tag(FluxDb fluxDb, String tag) implements FluxReq {
         @Override
         public String serializeHeader() {
             return "UNSUBSCRIBE tag:#" + tag;

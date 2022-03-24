@@ -1,12 +1,10 @@
 package yams.interaction.fluxreq;
 
-import yams.interaction.res.OkRes;
-import yams.interaction.res.Res;
-import yams.msg.db.MsgDb;
+import yams.interaction.flux.FluxDb;
 
 public class SubReq {
 
-    public static record User(MsgDb db, String author) implements FluxReq {
+    public static record User(FluxDb fluxDb, String author) implements FluxReq {
 
         @Override
         public String serializeHeader() {
@@ -17,15 +15,9 @@ public class SubReq {
         public String serializeBody() {
             return "";
         }
-
-        @Override
-        public Res handle() {
-            // TODO
-            return new OkRes();
-        }
     }
 
-    public static record Tag(MsgDb db, String tag) implements FluxReq {
+    public static record Tag(FluxDb fluxDb, String tag) implements FluxReq {
 
         @Override
         public String serializeHeader() {
@@ -35,12 +27,6 @@ public class SubReq {
         @Override
         public String serializeBody() {
             return "";
-        }
-
-        @Override
-        public Res handle() {
-            // TODO
-            return new OkRes();
         }
     }
 

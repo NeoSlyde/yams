@@ -9,6 +9,7 @@ import java.util.function.Function;
 
 import yams.interaction.Interaction;
 import yams.interaction.InteractionLoggerDecorator;
+import yams.interaction.flux.FluxDb;
 import yams.interaction.parser.InteractionParser;
 import yams.interaction.res.ErrRes;
 import yams.msg.db.ListMsgDb;
@@ -16,6 +17,7 @@ import yams.msg.db.MsgDb;
 
 public class ServerMain {
     private static MsgDb msgDb = new ListMsgDb();
+    private static FluxDb fluxDb = new FluxDb();
 
     public static void run(int port) {
         try {
@@ -46,7 +48,7 @@ public class ServerMain {
                         break;
 
                     String body = in.next();
-                    var parser = new InteractionParser(msgDb);
+                    var parser = new InteractionParser(msgDb, fluxDb);
                     try {
                         Interaction req = parser.parse(header, body);
                         reqDecorator.apply(req).receive(client);

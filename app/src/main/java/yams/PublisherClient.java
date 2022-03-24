@@ -20,7 +20,7 @@ public class PublisherClient {
 
             System.out.print("Enter your username: ");
             var user = stdinScanner.nextLine().trim();
-            var parser = new InteractionParser(null);
+            var parser = new InteractionParser(null, null);
 
             while (stdinScanner.hasNextLine()) {
                 String msg = stdinScanner.nextLine().trim();

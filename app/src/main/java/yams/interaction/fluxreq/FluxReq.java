@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.net.Socket;
 
 import yams.interaction.Interaction;
-import yams.interaction.res.Res;
-import yams.msg.db.MsgDb;
+import yams.interaction.flux.FluxDb;
 
 public interface FluxReq extends Interaction {
-    Res handle();
-
-    MsgDb db();
+    FluxDb fluxDb();
 
     @Override
     default void receive(Socket socket) throws IOException {

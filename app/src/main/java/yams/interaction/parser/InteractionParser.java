@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import yams.interaction.Interaction;
+import yams.interaction.flux.FluxDb;
 import yams.interaction.fluxreq.*;
 import yams.interaction.req.PubReq;
 import yams.interaction.req.RcvIdsReq;
@@ -18,7 +19,7 @@ import yams.interaction.res.ErrRes.BadReqFormat;
 import yams.msg.Msg;
 import yams.msg.db.MsgDb;
 
-public record InteractionParser(MsgDb db) {
+public record InteractionParser(MsgDb db, FluxDb fluxDb) {
     public Interaction parse(String header, String body) throws ErrRes {
         try {
             String[] headerParts = header.split(" ");
@@ -144,7 +145,7 @@ public record InteractionParser(MsgDb db) {
 
     private Interaction parseConnReq(ArgumentParser argParser, String body) throws BadReqFormat {
         String user = parseUser(argParser.getRequired("user"));
-        return new ConnReq(db, user);
+        return new ConnReq(fluxDb, user);
     }
 
     private Interaction parseSubReq(ArgumentParser argParser, String body) throws BadReqFormat {
@@ -155,10 +156,10 @@ public record InteractionParser(MsgDb db) {
             throw new BadReqFormat();
         }
         else if(tag.isPresent()){
-            return new SubReq.Tag(db, tag.get());
+            return new SubReq.Tag(fluxDb, tag.get());
         }
         else if(author.isPresent()){
-            return new SubReq.User(db, author.get());
+            return new SubReq.User(fluxDb, author.get());
         }
         throw new BadReqFormat();
     }
@@ -171,10 +172,10 @@ public record InteractionParser(MsgDb db) {
             throw new BadReqFormat();
         }
         else if(tag.isPresent()){
-            return new UnSubReq.Tag(db, tag.get());
+            return new UnSubReq.Tag(fluxDb, tag.get());
         }
         else if(author.isPresent()){
-            return new UnSubReq.User(db, author.get());
+            return new UnSubReq.User(fluxDb, author.get());
         }
         throw new BadReqFormat();
     }

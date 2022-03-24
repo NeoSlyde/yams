@@ -27,7 +27,7 @@ public class ReposterClient {
             System.out.print("Enter a space separated list of users to repost: ");
             String[] users = stdinScanner.nextLine().split(" ");
 
-            var parser = new InteractionParser(null);
+            var parser = new InteractionParser(null,null);
 
             // Get IDs
 

@@ -1,10 +1,9 @@
 package yams.interaction.fluxreq;
 
 
-import yams.interaction.res.Res;
-import yams.msg.db.MsgDb;
+import yams.interaction.flux.FluxDb;
 
-public record ConnReq(MsgDb db, String user) implements FluxReq {
+public record ConnReq(FluxDb fluxDb, String user) implements FluxReq {
     @Override
     public String serializeHeader() {
         return "CONNECT user:@" + user;
@@ -13,11 +12,5 @@ public record ConnReq(MsgDb db, String user) implements FluxReq {
     @Override
     public String serializeBody() {
         return "";
-    }
-
-    @Override
-    public Res handle() {
-        //TODO
-        return null;
     }
 }

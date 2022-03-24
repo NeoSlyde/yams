@@ -12,7 +12,7 @@ import com.google.common.primitives.Longs;
 
 import yams.interaction.parser.InteractionParser;
 import yams.interaction.req.RcvIdsReq;
-import yams.interaction.req.RcvMsg;
+import yams.interaction.req.RcvMsgReq;
 import yams.interaction.res.ErrRes;
 import yams.interaction.res.MsgIdsRes;
 import yams.interaction.res.MsgRes;
@@ -55,7 +55,7 @@ public class FollowerClient {
 
             List<Msg> msgs = new ArrayList<>();
             for (long id : ids) {
-                var req = new RcvMsg(null, id);
+                var req = new RcvMsgReq(null, id);
                 req.sendTo(out);
                 var header = in.next().trim();
                 var body = in.next().trim();

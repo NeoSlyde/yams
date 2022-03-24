@@ -5,7 +5,7 @@ import yams.interaction.res.MsgRes;
 import yams.interaction.res.Res;
 import yams.msg.db.MsgDb;
 
-public record RcvMsg(MsgDb db, long id) implements Req {
+public record RcvMsgReq(MsgDb db, long id) implements Req {
     @Override
     public String serializeHeader() {
         return "RCV_MSG msg_id:" + id;

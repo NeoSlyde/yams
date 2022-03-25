@@ -3,11 +3,18 @@ package yams.msg.db;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import yams.msg.Msg;
 
 public class ListMsgDb implements MsgDb {
     private List<Msg> _dbUnsync = new ArrayList<>();
+
+    private Consumer<Msg> _onPush;
+
+    public ListMsgDb(Consumer<Msg> onPush) {
+        _onPush = onPush;
+    }
 
     @Override
     public void push(String user,
@@ -15,7 +22,9 @@ public class ListMsgDb implements MsgDb {
             boolean republished,
             String msg) {
         synchronized (_dbUnsync) {
-            _dbUnsync.add(new Msg(_dbUnsync.size(), user, replyToId, republished, msg));
+            Msg msg_ = new Msg(_dbUnsync.size(), user, replyToId, republished, msg);
+            _dbUnsync.add(msg_);
+            _onPush.accept(msg_);
         }
     }
 

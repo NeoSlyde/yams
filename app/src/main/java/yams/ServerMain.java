@@ -16,8 +16,10 @@ import yams.msg.db.ListMsgDb;
 import yams.msg.db.MsgDb;
 
 public class ServerMain {
-    private static MsgDb msgDb = new ListMsgDb();
     private static FluxDb fluxDb = new FluxDb();
+    private static MsgDb msgDb = new ListMsgDb( msg -> {
+        fluxDb.notify(msg);
+    });
 
     public static void run(int port) {
         try {

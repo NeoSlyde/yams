@@ -52,4 +52,12 @@ public class FluxDb {
             }
         });
     }
+
+    public boolean isSubscribedToUser(String user, Socket socket){
+        return userSubscribers.containsKey(user) && userSubscribers.get(user).contains(socket);
+    }
+
+    public boolean isSubscribedToTag(String tag, Socket socket){
+        return tagSubscribers.containsKey(tag) && tagSubscribers.get(tag).contains(socket);
+    }
 }

@@ -24,4 +24,19 @@ public abstract class ErrRes extends Exception implements Res {
             return "unknown message id";
         }
     }
+
+    public static class UserNotFound extends ErrRes {
+        @Override
+        public String serializeBody() {
+            return "user not found";
+        }
+    }
+
+    public static class NotSubscribed extends ErrRes {
+        @Override
+        public String serializeBody() {
+            return "not subscribed";
+        }
+    }
+
 }

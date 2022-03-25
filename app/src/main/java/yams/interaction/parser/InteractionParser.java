@@ -78,6 +78,10 @@ public record InteractionParser(MsgDb db, FluxDb fluxDb) {
                 return new ErrRes.BadReqFormat();
             case "unknown message id":
                 return new ErrRes.UnknownMsgId();
+            case "user not found":
+                return new ErrRes.UserNotFound();
+            case "not subscribed":
+                return new ErrRes.NotSubscribed();
             default:
                 throw new ErrRes.BadReqFormat();
         }
@@ -159,7 +163,7 @@ public record InteractionParser(MsgDb db, FluxDb fluxDb) {
             return new SubReq.Tag(fluxDb, tag.get());
         }
         else if(author.isPresent()){
-            return new SubReq.User(fluxDb, author.get());
+            return new SubReq.User(db, fluxDb, author.get());
         }
         throw new BadReqFormat();
     }

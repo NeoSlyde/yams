@@ -12,8 +12,9 @@ public class TextComponent extends Pane{
     
     public TextComponent(String text) {
         this.text = new Text(text);
-        this.text.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        this.text.setFill(Color.WHITE);
+        this.text.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
+        this.text.setFill(Color.BLACK);
+        this.setHeight(200);
         this.getChildren().add(this.text);
     }
     

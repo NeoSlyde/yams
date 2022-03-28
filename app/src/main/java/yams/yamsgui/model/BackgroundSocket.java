@@ -11,4 +11,8 @@ public class BackgroundSocket {
         socket = new Socket(host, port);
         this.username = username;
     }
+
+    public String getUsername() {
+        return username;
+    }
 }

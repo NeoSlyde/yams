@@ -8,6 +8,7 @@ import com.google.common.base.Objects;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import yams.yamsgui.App;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,6 +19,7 @@ public class Main {
         argsParser.addArgument("--publisherClient").action(Arguments.storeConst()).setConst(1);
         argsParser.addArgument("--followerClient").action(Arguments.storeConst()).setConst(1);
         argsParser.addArgument("--reposterClient").action(Arguments.storeConst()).setConst(1);
+        argsParser.addArgument("--guiClient").action(Arguments.storeConst()).setConst(1);
 
         argsParser.addArgument("--port", "-p")
                 .type(Integer.class)
@@ -38,6 +40,7 @@ public class Main {
         boolean isPublisherClient = Objects.equal(1, parsedArgs.get("publisherClient"));
         boolean isFollowerClient = Objects.equal(1, parsedArgs.get("followerClient"));
         boolean isReposterClient = Objects.equal(1, parsedArgs.get("reposterClient"));
+        boolean isGuiClient = Objects.equal(1, parsedArgs.get("guiClient"));
 
         if (isPublisherClient)
             PublisherClient.run(host, port);
@@ -45,6 +48,8 @@ public class Main {
             FollowerClient.run(host, port);
         else if (isReposterClient)
             ReposterClient.run(host, port);
+        else if (isGuiClient)
+            App.main(new String[0]);    
         else
             ServerMain.run(port);
     }

@@ -154,7 +154,12 @@ public record InteractionParser(MsgDb db, FluxDb fluxDb) {
 
     private Interaction parseSubReq(ArgumentParser argParser, String body) throws BadReqFormat {
         Optional<String> author = argParser.get("author");
+        if (author.isPresent())
+            author = Optional.of(parseUser(author.get()));
+
         Optional<String> tag = argParser.get("tag");
+        if (tag.isPresent())
+            tag = Optional.of(parseTag(tag.get()));
 
         if(tag.isPresent() && author.isPresent()){
             throw new BadReqFormat();

@@ -14,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import yams.interaction.Interaction;
 import yams.interaction.fluxreq.SubReq;
+import yams.interaction.fluxreq.SubReq.User;
 import yams.interaction.req.PubReq;
 import yams.msg.Msg;
 import yams.yamsgui.controller.SceneController;
@@ -40,36 +41,39 @@ public class MainView extends Scene {
 
         Button sendSub = new Button("S'abonner");
         HBox hbBtnSub = new HBox(10);
-        hbBtnSub.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtnSub.getChildren().add(sendSub);
-        grid.add(hbBtnSub, 1, 5);
+        grid.add(hbBtnSub, 1, 0);
 
         sendSub.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    SubReq subReq = new SubReq();
-                    bgSocket.send((Interaction) subReq);
+                    if(inputSub.getText() != bgSocket.getUsername()){
+                    User subReq = new SubReq.User(null, null, inputSub.getText());
+                    bgSocket.sendToFlux((Interaction) subReq);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
 
+        
 
 
-        grid.add(messageView, 0, 0, 2, 1);
+
+        grid.add(messageView, 0, 1, 2, 1);
 
 
         TextField input = new TextField();
         input.setPromptText("Entrez votre message ici");
-        grid.add(input, 0, 5, 2, 1);
+        grid.add(input, 0, 6, 2, 1);
 
         Button send = new Button("Envoyer");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(send);
-        grid.add(hbBtn, 2, 5);
+        grid.add(hbBtn, 3, 6);
 
         input.setOnAction(new EventHandler<ActionEvent>() {
             @Override

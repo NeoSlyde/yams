@@ -2,6 +2,7 @@ package yams.yamsgui.model;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.function.Consumer;
 
 import yams.interaction.Interaction;
@@ -19,15 +20,17 @@ public class BackgroundSocket {
 
     public BackgroundSocket(String host, int port,String username) throws IOException {
         reqSocket = new Socket(host, port);
+        fluxSocket = new Socket(host, port);
+        
         this.username = username;
 
         new Thread(()-> {
             try {
-                fluxSocket = new Socket(host, port);
+                Scanner scanner = new Scanner(fluxSocket.getInputStream()).useDelimiter("\r\n");
                 new ConnReq(null, username).sendTo(fluxSocket.getOutputStream());
-                Interaction.getResponse(fluxSocket.getInputStream());
-                while(true){
-                    var res = Interaction.getResponse(fluxSocket.getInputStream());
+                Interaction.getResponse(scanner);
+                while(scanner.hasNext()){
+                    var res = Interaction.getResponse(scanner);
                     if(res instanceof MsgRes && onReceiveMsg != null){
                         onReceiveMsg.accept(((MsgRes) res).msg());
                     }
@@ -38,7 +41,7 @@ public class BackgroundSocket {
                 e.printStackTrace();
             }
             
-        });
+        }).start();
 
         
     }
@@ -53,5 +56,9 @@ public class BackgroundSocket {
 
     public void setOnReceiveMsg(Consumer<Msg> onReceiveMsg) {
         this.onReceiveMsg = onReceiveMsg;
+    }
+
+    public void sendToFlux(Interaction interaction) throws IOException{
+        interaction.sendTo(fluxSocket.getOutputStream());
     }
 }

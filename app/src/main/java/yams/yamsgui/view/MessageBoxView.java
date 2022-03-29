@@ -12,11 +12,14 @@ public class MessageBoxView extends ScrollPane {
         this.setPrefHeight(400);
         this.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         this.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        //make scrollpane background white
+        this.setStyle("-fx-background: #FFFFFF; -fx-border-color: #FFFFFF;");
         this.setContent(messageView);
     }
 
     public void addMessage(TextComponent text) {
         this.messageView.addMessage(text);
+        this.vvalueProperty().bind(this.vmaxProperty());
     }
 
     public MessageView getMessageView() {

@@ -7,10 +7,9 @@ import yams.yamsgui.view.component.TextComponent;
 public class MessageView extends GridPane{
 
     public MessageView() {
-        this.setPrefWidth(400);
+        this.setPrefWidth(880);
         this.setHgap(10);
-        this.setVgap(10);
-        this.setPadding(new Insets(25, 25, 25, 25));
+        this.setVgap(1);
     }
 
     public void addMessage(TextComponent text){

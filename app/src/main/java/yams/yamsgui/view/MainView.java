@@ -48,7 +48,7 @@ public class MainView extends Scene {
             public void handle(ActionEvent event) {
                 String message = input.getText();
                 if (message.length() > 0) {
-                    messageView.addMessage(new TextComponent("@" + bgSocket.getUsername() +" : " + message));
+                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false));
                     input.setText("");
                     //TODO
                 }

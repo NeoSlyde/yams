@@ -79,6 +79,9 @@ public class StartView extends Scene {
                             actiontarget.setFill(Color.FIREBRICK);
                             actiontarget.setText("Connexion en cours...");
                             MainView mainScene = new MainView(sceneController, bgSocket);
+                            bgSocket.setOnReceiveMsg(msg -> {
+                                mainScene.addMessage(msg);
+                            });
                             sceneController.addScene("main", mainScene);
                             sceneController.switchScene("main");
 

@@ -1,7 +1,6 @@
 package yams.yamsgui;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import yams.yamsgui.controller.SceneController;
 import yams.yamsgui.view.StartView;

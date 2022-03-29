@@ -16,12 +16,18 @@ public class SubscribeButton extends Button{
 
         this.setPadding(Insets.EMPTY);
 
+        this.author = author;
+
         this.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("SubscribeButton.handle()");
             }
         });
+    }
+
+    public String getAuthor() {
+        return author;
     }
     
     

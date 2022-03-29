@@ -12,6 +12,9 @@ public class ReplyButton extends Button{
     public ReplyButton(long id) {
         super("Reply");
 
+
+        this.id = id;
+
         this.setPadding(Insets.EMPTY);
         
         this.setStyle("-fx-background-color: slateblue; -fx-text-fill: white;");
@@ -22,6 +25,10 @@ public class ReplyButton extends Button{
                 System.out.println("ReplyButton.handle()");
             }
         });
+    }
+
+    public long getMsgId() {
+        return id;
     }
     
     

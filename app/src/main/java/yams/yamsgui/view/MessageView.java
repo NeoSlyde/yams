@@ -1,6 +1,5 @@
 package yams.yamsgui.view;
 
-import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import yams.yamsgui.view.component.TextComponent;
 

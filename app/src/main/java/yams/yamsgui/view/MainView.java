@@ -16,6 +16,7 @@ import yams.interaction.Interaction;
 import yams.interaction.fluxreq.SubReq;
 import yams.interaction.fluxreq.SubReq.User;
 import yams.interaction.req.PubReq;
+import yams.interaction.req.ReplyReq;
 import yams.msg.Msg;
 import yams.yamsgui.controller.SceneController;
 import yams.yamsgui.model.BackgroundSocket;
@@ -25,6 +26,7 @@ public class MainView extends Scene {
 
     private MessageBoxView messageView = new MessageBoxView();
     private BackgroundSocket bgSocket;
+    private TextField input;
 
 
     public MainView(SceneController sceneController, BackgroundSocket bgSocket) {
@@ -67,7 +69,7 @@ public class MainView extends Scene {
         grid.add(messageView, 0, 1, 2, 1);
 
 
-        TextField input = new TextField();
+        input = new TextField();
         input.setPromptText("Entrez votre message ici");
         grid.add(input, 0, 6, 2, 1);
 
@@ -81,8 +83,23 @@ public class MainView extends Scene {
             @Override
             public void handle(ActionEvent event) {
                 String message = input.getText();
-                if (!message.isEmpty()) {
-                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket));
+                //if message contains Replying to
+                if(message.contains("Replying to")){
+                    String[] split = message.split(" ");
+                    String msgId = split[4];
+                    long id = Long.parseLong(msgId);
+                    try {
+                        messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket, input));
+                        ReplyReq replyReq = new ReplyReq(null, bgSocket.getUsername(), id, message.substring(message.indexOf(":") + 2));
+                        bgSocket.send(replyReq);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    input.clear();
+                }
+
+                else if (!message.isEmpty()) {
+                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket, input));
                     PubReq pubReq = new PubReq(null, bgSocket.getUsername(), message);
                     try {
                         bgSocket.send(pubReq);
@@ -99,8 +116,21 @@ public class MainView extends Scene {
             @Override
             public void handle(ActionEvent event) {
                 String message = input.getText();
-                if (message.length() > 0) {
-                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket));
+                if(message.contains("Replying to")){
+                    String[] split = message.split(" ");
+                    String msgId = split[4];
+                    long id = Long.parseLong(msgId);
+                    try {
+                        messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket, input));
+                        ReplyReq replyReq = new ReplyReq(null, bgSocket.getUsername(), id, message);
+                        bgSocket.send(replyReq);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    input.clear();
+                }
+                else if (message.length() > 0) {
+                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket, input));
                     PubReq pubReq = new PubReq(null, bgSocket.getUsername(), message);
                     try {
                         bgSocket.send(pubReq);
@@ -116,7 +146,7 @@ public class MainView extends Scene {
     }
 
     public void addMessage(Msg msg) {
-        Platform.runLater(() -> {messageView.addMessage(new TextComponent(msg.id(), msg.msg(), msg.user(), msg.republished(),this.bgSocket));});
+        Platform.runLater(() -> {messageView.addMessage(new TextComponent(msg.id(), msg.msg(), msg.user(), msg.republished(),this.bgSocket, input));});
     }
     
 }

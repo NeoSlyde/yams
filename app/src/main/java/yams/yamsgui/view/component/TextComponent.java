@@ -1,6 +1,10 @@
 package yams.yamsgui.view.component;
 
 
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -17,7 +21,7 @@ public class TextComponent extends HBox{
     private Boolean republished;
 
     
-    public TextComponent(long id, String text, String author, Boolean republished, BackgroundSocket bgSocket) {
+    public TextComponent(long id, String text, String author, Boolean republished, BackgroundSocket bgSocket, TextField input) {
         this.text = new Text("@" + author + " : " + text);
         this.text.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         this.text.setFill(Color.BLACK);
@@ -28,7 +32,14 @@ public class TextComponent extends HBox{
         this.getChildren().add(spacer);
 
 
-        ReplyButton replyButton = new ReplyButton(id);
+        ReplyButton replyButton = new ReplyButton(id, bgSocket);
+        replyButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                input.setText("Replying to " + author + " msgId "+ id +" : ");
+            }
+        });
+
         UnSubscribeButton subscribeButton = new UnSubscribeButton(author, bgSocket);
 
         this.getChildren().add(replyButton);

@@ -19,7 +19,7 @@ public record ReplyReq(MsgDb db, String user, long replyToId, String msg) implem
     @Override
     public Res handle() {
         try {
-            db.reply(user, replyToId);
+            db.reply(user, replyToId, msg);
         } catch (ErrRes e) {
             return e;
         }

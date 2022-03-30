@@ -15,10 +15,10 @@ public interface MsgDb {
         push(user, Optional.empty(), false, msg);
     }
 
-    default void reply(String user, long replyToId) throws ErrRes.UnknownMsgId {
+    default void reply(String user, long replyToId, String msg) throws ErrRes.UnknownMsgId {
         if (getById(replyToId).isEmpty())
             throw new ErrRes.UnknownMsgId();
-        push(user, Optional.of(replyToId), false, "");
+        push(user, Optional.of(replyToId), false, "Reply to msgId " + replyToId + " : "+ msg);
     }
 
     default void republish(String user, long republishId) throws ErrRes.UnknownMsgId {

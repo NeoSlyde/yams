@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import yams.yamsgui.model.BackgroundSocket;
 
 public class TextComponent extends HBox{
 
@@ -16,7 +17,7 @@ public class TextComponent extends HBox{
     private Boolean republished;
 
     
-    public TextComponent(long id, String text, String author, Boolean republished) {
+    public TextComponent(long id, String text, String author, Boolean republished, BackgroundSocket bgSocket) {
         this.text = new Text("@" + author + " : " + text);
         this.text.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         this.text.setFill(Color.BLACK);
@@ -28,7 +29,7 @@ public class TextComponent extends HBox{
 
 
         ReplyButton replyButton = new ReplyButton(id);
-        SubscribeButton subscribeButton = new SubscribeButton(author);
+        UnSubscribeButton subscribeButton = new UnSubscribeButton(author, bgSocket);
 
         this.getChildren().add(replyButton);
         this.getChildren().add(subscribeButton);

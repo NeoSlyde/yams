@@ -24,10 +24,12 @@ import yams.yamsgui.view.component.TextComponent;
 public class MainView extends Scene {
 
     private MessageBoxView messageView = new MessageBoxView();
+    private BackgroundSocket bgSocket;
 
 
     public MainView(SceneController sceneController, BackgroundSocket bgSocket) {
         super(new GridPane(), 920, 720);
+        this.bgSocket = bgSocket;
         GridPane grid = (GridPane) this.getRoot();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -80,7 +82,7 @@ public class MainView extends Scene {
             public void handle(ActionEvent event) {
                 String message = input.getText();
                 if (!message.isEmpty()) {
-                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false));
+                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket));
                     PubReq pubReq = new PubReq(null, bgSocket.getUsername(), message);
                     try {
                         bgSocket.send(pubReq);
@@ -98,7 +100,7 @@ public class MainView extends Scene {
             public void handle(ActionEvent event) {
                 String message = input.getText();
                 if (message.length() > 0) {
-                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false));
+                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket));
                     PubReq pubReq = new PubReq(null, bgSocket.getUsername(), message);
                     try {
                         bgSocket.send(pubReq);
@@ -114,7 +116,7 @@ public class MainView extends Scene {
     }
 
     public void addMessage(Msg msg) {
-        Platform.runLater(() -> {messageView.addMessage(new TextComponent(msg.id(), msg.msg(), msg.user(), msg.republished()));});
+        Platform.runLater(() -> {messageView.addMessage(new TextComponent(msg.id(), msg.msg(), msg.user(), msg.republished(),this.bgSocket));});
     }
     
 }

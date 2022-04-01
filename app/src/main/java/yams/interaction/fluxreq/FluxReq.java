@@ -11,6 +11,5 @@ public interface FluxReq extends Interaction {
 
     @Override
     default void receive(Socket socket) throws IOException {
-        //TODO
     }
 }

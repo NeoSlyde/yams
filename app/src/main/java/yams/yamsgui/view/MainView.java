@@ -28,7 +28,6 @@ public class MainView extends Scene {
     private BackgroundSocket bgSocket;
     private TextField input;
 
-
     public MainView(SceneController sceneController, BackgroundSocket bgSocket) {
         super(new GridPane(), 920, 720);
         this.bgSocket = bgSocket;
@@ -37,7 +36,6 @@ public class MainView extends Scene {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
-
 
         TextField inputSub = new TextField();
         inputSub.setPromptText("Entrez le nom d'utilisateur au quel vous souhaitez vous abonner");
@@ -52,9 +50,9 @@ public class MainView extends Scene {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    if(inputSub.getText() != bgSocket.getUsername()){
-                    User subReq = new SubReq.User(null, null, inputSub.getText());
-                    bgSocket.sendToFlux((Interaction) subReq);
+                    if (inputSub.getText() != bgSocket.getUsername()) {
+                        User subReq = new SubReq.User(null, null, inputSub.getText());
+                        bgSocket.sendToFlux((Interaction) subReq);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -62,12 +60,7 @@ public class MainView extends Scene {
             }
         });
 
-        
-
-
-
         grid.add(messageView, 0, 1, 2, 1);
-
 
         input = new TextField();
         input.setPromptText("Entrez votre message ici");
@@ -83,14 +76,15 @@ public class MainView extends Scene {
             @Override
             public void handle(ActionEvent event) {
                 String message = input.getText();
-                //if message contains Replying to
-                if(message.contains("Replying to")){
+                if (message.contains("Replying to")) {
                     String[] split = message.split(" ");
                     String msgId = split[4];
                     long id = Long.parseLong(msgId);
                     try {
-                        messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket, input));
-                        ReplyReq replyReq = new ReplyReq(null, bgSocket.getUsername(), id, message.substring(message.indexOf(":") + 2));
+                        messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(),
+                                false, bgSocket, input, true));
+                        ReplyReq replyReq = new ReplyReq(null, bgSocket.getUsername(), id,
+                                message.substring(message.indexOf(":") + 2));
                         bgSocket.send(replyReq);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -99,7 +93,8 @@ public class MainView extends Scene {
                 }
 
                 else if (!message.isEmpty()) {
-                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket, input));
+                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false,
+                            bgSocket, input, true));
                     PubReq pubReq = new PubReq(null, bgSocket.getUsername(), message);
                     try {
                         bgSocket.send(pubReq);
@@ -111,26 +106,26 @@ public class MainView extends Scene {
             }
         });
 
-
         send.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 String message = input.getText();
-                if(message.contains("Replying to")){
+                if (message.contains("Replying to")) {
                     String[] split = message.split(" ");
                     String msgId = split[4];
                     long id = Long.parseLong(msgId);
                     try {
-                        messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket, input));
+                        messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(),
+                                false, bgSocket, input, true));
                         ReplyReq replyReq = new ReplyReq(null, bgSocket.getUsername(), id, message);
                         bgSocket.send(replyReq);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     input.clear();
-                }
-                else if (message.length() > 0) {
-                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false, bgSocket, input));
+                } else if (message.length() > 0) {
+                    messageView.addMessage(new TextComponent(message.length(), message, bgSocket.getUsername(), false,
+                            bgSocket, input, true));
                     PubReq pubReq = new PubReq(null, bgSocket.getUsername(), message);
                     try {
                         bgSocket.send(pubReq);
@@ -142,11 +137,13 @@ public class MainView extends Scene {
             }
         });
 
-    
     }
 
     public void addMessage(Msg msg) {
-        Platform.runLater(() -> {messageView.addMessage(new TextComponent(msg.id(), msg.msg(), msg.user(), msg.republished(),this.bgSocket, input));});
+        Platform.runLater(() -> {
+            messageView.addMessage(
+                    new TextComponent(msg.id(), msg.msg(), msg.user(), msg.republished(), this.bgSocket, input, false));
+        });
     }
-    
+
 }
